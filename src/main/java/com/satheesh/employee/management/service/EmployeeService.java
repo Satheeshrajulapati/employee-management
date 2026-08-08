@@ -2,7 +2,6 @@ package com.satheesh.employee.management.service;
 
 import com.satheesh.employee.management.dto.EmployeeRequestDto;
 import com.satheesh.employee.management.entity.Employee;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -15,4 +14,6 @@ public interface EmployeeService {
     void updateEmployee(Long id, EmployeeRequestDto dto);
 
     Employee getEmployeeById(Long id);
+
+    void deleteEmployee(Long id);
 }
