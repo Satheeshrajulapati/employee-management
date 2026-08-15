@@ -1,19 +1,19 @@
 package com.satheesh.employee.management.service;
 
 import com.satheesh.employee.management.dto.EmployeeRequestDto;
-import com.satheesh.employee.management.entity.Employee;
+import com.satheesh.employee.management.dto.EmployeeResponseDto;
 
 import java.util.List;
 
 public interface EmployeeService {
 
-    List<Employee> getAllEmployees();
+    List<EmployeeResponseDto> getAllEmployees();
 
-    void saveEmployee(EmployeeRequestDto dto);
+    EmployeeResponseDto saveEmployee(EmployeeRequestDto dto);
 
-    void updateEmployee(Long id, EmployeeRequestDto dto);
+    EmployeeResponseDto updateEmployee(Long id, EmployeeRequestDto dto);
 
-    Employee getEmployeeById(Long id);
+    EmployeeResponseDto getEmployeeById(Long id);
 
     void deleteEmployee(Long id);
 }

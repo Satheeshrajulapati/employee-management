@@ -1,33 +1,29 @@
 package com.satheesh.employee.management.dto;
 
-import jakarta.validation.constraints.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class EmployeeRequestDto {
+public class EmployeeResponseDto {
 
-    @NotBlank(message = "Employee name is required")
-    @Size(max = 100, message = "Employee name cannot exceeded 100 characters")
+    private Long id;
     private String employeeName;
-
-    @NotBlank(message = "Email is required")
-    @Email(message = "Please provide a valid email")
     private String email;
-
-    @NotBlank(message = "Department is required")
     private String department;
-
-    @NotNull(message = "Salary is required")
-    @Positive(message = "Salary must be greater than zero")
     private BigDecimal salary;
-
-    @NotNull(message = "Joining date is required")
     private LocalDate joiningDate;
 
-    public EmployeeRequestDto(){}
+    public EmployeeResponseDto() {
+    }
 
-    public String getEmployeeName(){
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEmployeeName() {
         return employeeName;
     }
 
@@ -35,7 +31,7 @@ public class EmployeeRequestDto {
         this.employeeName = employeeName;
     }
 
-    public String getEmail(){
+    public String getEmail() {
         return email;
     }
 
@@ -43,7 +39,7 @@ public class EmployeeRequestDto {
         this.email = email;
     }
 
-    public String getDepartment(){
+    public String getDepartment() {
         return department;
     }
 
@@ -51,7 +47,7 @@ public class EmployeeRequestDto {
         this.department = department;
     }
 
-    public BigDecimal getSalary(){
+    public BigDecimal getSalary() {
         return salary;
     }
 
@@ -59,7 +55,7 @@ public class EmployeeRequestDto {
         this.salary = salary;
     }
 
-    public LocalDate getJoiningDate(){
+    public LocalDate getJoiningDate() {
         return joiningDate;
     }
 
