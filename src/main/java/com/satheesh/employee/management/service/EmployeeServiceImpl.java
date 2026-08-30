@@ -107,4 +107,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return responseDto;
     }
+
+   public List<EmployeeResponseDto>searchEmployees(String value) {
+
+        List<Employee> employees = employeeRepository.searchEmployees(value);
+
+        return employees.stream().map(this::convertToResponseDto).toList();
+   }
 }

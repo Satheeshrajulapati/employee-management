@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -69,4 +70,17 @@ public class EmployeeController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/search")
+    public List<EmployeeResponseDto>searchEmployees(@RequestParam String value){
+        return employeeService.searchEmployees(value);
+    }
+
+    @GetMapping("/departments")
+    public ResponseEntity<List<String>>getDepartments(){
+        List<String>departments = Arrays.asList("IT", "HR", "Finance", "Manager", "Engineering", "Marketing", "Executive");
+
+        return ResponseEntity.ok(departments);
+    }
+
 }
