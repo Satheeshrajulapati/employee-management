@@ -11,7 +11,10 @@ public class WebCofig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry){
 
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:4200")
+                .allowedOrigins(
+                        "http://localhost:4200",
+                        "https://employee-management-ui-ohwz.onrender.com"
+                )
                 .allowedMethods(
                         "GET",
                         "POST",
