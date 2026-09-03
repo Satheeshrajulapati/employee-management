@@ -1,5 +1,7 @@
 package com.satheesh.employee.management.config;
 
+import com.satheesh.employee.management.security.CustomAccessDeniedHandler;
+import com.satheesh.employee.management.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -27,45 +31,34 @@ public class SecurityConfig {
 
         http
                 .cors(cors -> {})
-
                 .csrf(csrf -> csrf.disable())
-
                 .formLogin(form -> form.disable())
-
                 .httpBasic(basic -> basic.disable())
+                .anonymous(anonymous -> anonymous.disable())
 
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                .authorizeHttpRequests(auth -> auth
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
+                )
 
-                        // Public APIs
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/error").permitAll()
 
-                        // Read operations - USER or ADMIN
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/employees/**"
-                        ).hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/employees/**")
+                        .hasAnyRole("USER", "ADMIN")
 
-                        // Create employee - ADMIN only
-                        .requestMatchers(
-                                HttpMethod.POST,
-                                "/api/employees/**"
-                        ).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/employees/**")
+                        .hasRole("ADMIN")
 
-                        // Update employee - ADMIN only
-                        .requestMatchers(
-                                HttpMethod.PUT,
-                                "/api/employees/**"
-                        ).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/employees/**")
+                        .hasRole("ADMIN")
 
-                        // Delete employee - ADMIN only
-                        .requestMatchers(
-                                HttpMethod.DELETE,
-                                "/api/employees/**"
-                        ).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/employees/**")
+                        .hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 );
