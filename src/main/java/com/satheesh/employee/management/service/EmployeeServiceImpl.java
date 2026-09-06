@@ -5,6 +5,8 @@ import com.satheesh.employee.management.dto.EmployeeResponseDto;
 import com.satheesh.employee.management.entity.Employee;
 import com.satheesh.employee.management.exception.EmployeeNotFoundException;
 import com.satheesh.employee.management.repository.EmployeeRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,13 +30,30 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public Page<EmployeeResponseDto> getEmployees(
+            String search,
+            String department,
+            Pageable pageable
+    ) {
+
+        return employeeRepository
+                .findEmployees(
+                        search,
+                        department,
+                        pageable
+                )
+                .map(this::convertToResponseDto);
+    }
+
+    @Override
     public EmployeeResponseDto saveEmployee(EmployeeRequestDto dto) {
 
         Employee employee = new Employee();
 
         setEmployeeFields(employee, dto);
 
-        Employee savedEmployee = employeeRepository.save(employee);
+        Employee savedEmployee =
+                employeeRepository.save(employee);
 
         return convertToResponseDto(savedEmployee);
     }
@@ -42,17 +61,21 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeResponseDto updateEmployee(
             Long id,
-            EmployeeRequestDto dto) {
+            EmployeeRequestDto dto
+    ) {
 
-        Employee employee = employeeRepository.findById(id)
+        Employee employee = employeeRepository
+                .findById(id)
                 .orElseThrow(() ->
                         new EmployeeNotFoundException(
                                 "Employee not found with id: " + id
-                        ));
+                        )
+                );
 
         setEmployeeFields(employee, dto);
 
-        Employee updatedEmployee = employeeRepository.save(employee);
+        Employee updatedEmployee =
+                employeeRepository.save(employee);
 
         return convertToResponseDto(updatedEmployee);
     }
@@ -60,11 +83,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeResponseDto getEmployeeById(Long id) {
 
-        Employee employee = employeeRepository.findById(id)
+        Employee employee = employeeRepository
+                .findById(id)
                 .orElseThrow(() ->
                         new EmployeeNotFoundException(
                                 "Employee not found with id: " + id
-                        ));
+                        )
+                );
 
         return convertToResponseDto(employee);
     }
@@ -72,19 +97,21 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void deleteEmployee(Long id) {
 
-        Employee employee = employeeRepository.findById(id)
+        Employee employee = employeeRepository
+                .findById(id)
                 .orElseThrow(() ->
                         new EmployeeNotFoundException(
                                 "Employee not found with id: " + id
-                        ));
+                        )
+                );
 
         employeeRepository.delete(employee);
     }
 
-    // Request DTO → Entity
     private void setEmployeeFields(
             Employee employee,
-            EmployeeRequestDto dto) {
+            EmployeeRequestDto dto
+    ) {
 
         employee.setEmployeeName(dto.getEmployeeName());
         employee.setEmail(dto.getEmail());
@@ -93,25 +120,26 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setJoiningDate(dto.getJoiningDate());
     }
 
-    // Entity → Response DTO
-    private EmployeeResponseDto convertToResponseDto(Employee employee) {
+    private EmployeeResponseDto convertToResponseDto(
+            Employee employee
+    ) {
 
-        EmployeeResponseDto responseDto = new EmployeeResponseDto();
+        EmployeeResponseDto responseDto =
+                new EmployeeResponseDto();
 
         responseDto.setId(employee.getId());
-        responseDto.setEmployeeName(employee.getEmployeeName());
+        responseDto.setEmployeeName(
+                employee.getEmployeeName()
+        );
         responseDto.setEmail(employee.getEmail());
-        responseDto.setDepartment(employee.getDepartment());
+        responseDto.setDepartment(
+                employee.getDepartment()
+        );
         responseDto.setSalary(employee.getSalary());
-        responseDto.setJoiningDate(employee.getJoiningDate());
+        responseDto.setJoiningDate(
+                employee.getJoiningDate()
+        );
 
         return responseDto;
     }
-
-   public List<EmployeeResponseDto>searchEmployees(String value) {
-
-        List<Employee> employees = employeeRepository.searchEmployees(value);
-
-        return employees.stream().map(this::convertToResponseDto).toList();
-   }
 }
