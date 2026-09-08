@@ -2,16 +2,20 @@ package com.satheesh.employee.management.controller;
 
 import com.satheesh.employee.management.dto.EmployeeRequestDto;
 import com.satheesh.employee.management.dto.EmployeeResponseDto;
+import com.satheesh.employee.management.service.EmployeeExcelService;
 import com.satheesh.employee.management.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,10 +25,14 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
+    private final EmployeeExcelService employeeExcelService;
+
     public EmployeeController(
-            EmployeeService employeeService
+            EmployeeService employeeService,
+            EmployeeExcelService employeeExcelService
     ) {
         this.employeeService = employeeService;
+        this.employeeExcelService = employeeExcelService;
     }
 
     @GetMapping
@@ -53,6 +61,34 @@ public class EmployeeController {
                 );
 
         return ResponseEntity.ok(employees);
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> exportEmployees(
+            @RequestParam(defaultValue = "")
+            String search,
+
+            @RequestParam(defaultValue = "")
+            String department
+    ) throws IOException {
+
+        byte[] excelFile =
+                employeeExcelService.exportEmployees(
+                        search,
+                        department
+                );
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=employees.xlsx"
+                )
+                .contentType(
+                        MediaType.parseMediaType(
+                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        )
+                )
+                .body(excelFile);
     }
 
     @PostMapping
