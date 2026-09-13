@@ -2,6 +2,7 @@ package com.satheesh.employee.management.service;
 
 import com.satheesh.employee.management.dto.ChangePasswordRequest;
 import com.satheesh.employee.management.dto.CreateUserRequest;
+import com.satheesh.employee.management.dto.ResetUserPasswordRequest;
 import com.satheesh.employee.management.dto.UserResponseDto;
 import com.satheesh.employee.management.entity.Role;
 import com.satheesh.employee.management.entity.User;
@@ -143,4 +144,58 @@ public class UserServiceImpl implements UserService {
                 )
                 .build();
     }
+
+    @Override
+    public UserResponseDto updateUserStatus(
+            Long userId,
+            String currentUsername,
+            Boolean enabled
+    ) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found")
+                );
+
+        if (user.getUsername().equals(currentUsername) && !enabled) {
+            throw new IllegalArgumentException(
+                    "You cannot disable your own account"
+            );
+        }
+
+        user.setEnabled(enabled);
+
+        User updatedUser = userRepository.save(user);
+
+        return mapToDto(updatedUser);
+    }
+
+    @Override
+    public void resetUserPassword(
+            Long userId,
+            String currentUsername,
+            ResetUserPasswordRequest request
+    ) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found")
+                );
+
+        if (user.getUsername().equals(currentUsername)) {
+            throw new IllegalArgumentException(
+                    "You cannot reset your own password from User Management"
+            );
+        }
+
+        user.setPassword(
+                passwordEncoder.encode(
+                        request.getTemporaryPassword()
+                )
+        );
+
+        user.setMustChangePassword(true);
+
+        userRepository.save(user);
+    }
+
 }
