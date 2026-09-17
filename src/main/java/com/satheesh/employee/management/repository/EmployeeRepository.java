@@ -1,6 +1,8 @@
 package com.satheesh.employee.management.repository;
 
 import com.satheesh.employee.management.entity.Employee;
+import com.satheesh.employee.management.projection.DepartmentEmployeeCount;
+import com.satheesh.employee.management.projection.EmployeeJoiningTrend;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -53,4 +55,32 @@ public interface EmployeeRepository
             @Param("search") String search,
             @Param("department") String department
     );
+
+    @Query("""
+            SELECT
+                e.department AS department,
+                COUNT(e) AS employeeCount
+            FROM Employee e
+            GROUP BY e.department
+            ORDER BY COUNT(e) DESC
+            """)
+    List<DepartmentEmployeeCount>
+    countEmployeesByDepartment();
+
+    List<Employee> findTop5ByOrderByJoiningDateDescIdDesc();
+
+    @Query("""
+        SELECT
+            YEAR(e.joiningDate) AS year,
+            MONTH(e.joiningDate) AS month,
+            COUNT(e) AS employeeCount
+        FROM Employee e
+        GROUP BY
+            YEAR(e.joiningDate),
+            MONTH(e.joiningDate)
+        ORDER BY
+            YEAR(e.joiningDate) ASC,
+            MONTH(e.joiningDate) ASC
+        """)
+    List<EmployeeJoiningTrend> getEmployeeJoiningTrend();
 }

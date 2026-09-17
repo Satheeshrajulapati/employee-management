@@ -12,7 +12,8 @@ public interface UserService {
     List<UserResponseDto> getAllUsers();
 
     UserResponseDto createUser(
-            CreateUserRequest request
+            CreateUserRequest request,
+            String currentUsername
     );
 
     void changePassword(
@@ -31,5 +32,4 @@ public interface UserService {
             String currentUsername,
             ResetUserPasswordRequest request
     );
-
 }

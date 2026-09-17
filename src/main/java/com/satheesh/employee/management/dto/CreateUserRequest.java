@@ -1,7 +1,9 @@
 package com.satheesh.employee.management.dto;
 
+import com.satheesh.employee.management.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,4 +30,7 @@ public class CreateUserRequest {
             message = "Temporary password must be at least 8 characters"
     )
     private String temporaryPassword;
+
+    @NotNull(message = "Role is required")
+    private Role role;
 }

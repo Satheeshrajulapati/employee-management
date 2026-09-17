@@ -30,9 +30,11 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean enabled = true;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean mustChangePassword = false;
 

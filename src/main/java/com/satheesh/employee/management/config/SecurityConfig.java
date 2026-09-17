@@ -46,6 +46,8 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
+
+                        // Public APIs
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/error",
@@ -54,25 +56,36 @@ public class SecurityConfig {
                                 "/v3/api-docs/**"
                         ).permitAll()
 
+                        .requestMatchers("/api/dashboard/**")
+                        .authenticated()
+
+                        // User Management
                         .requestMatchers("/api/admin/**")
-                        .hasRole("ADMIN")
+                        .hasAnyRole("ADMIN", "SUPER_ADMIN")
 
-                        .requestMatchers( HttpMethod.GET,  "/api/employees/export" )
-                        .hasRole("ADMIN")
+                        // Employee export
+                        .requestMatchers(HttpMethod.GET, "/api/employees/export")
+                        .hasAnyRole("ADMIN", "SUPER_ADMIN")
 
+                        // Employee read access
                         .requestMatchers(HttpMethod.GET, "/api/employees/**")
-                        .hasAnyRole("USER", "ADMIN")
+                        .hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
 
+                        // Employee create access
                         .requestMatchers(HttpMethod.POST, "/api/employees/**")
-                        .hasRole("ADMIN")
+                        .hasAnyRole("ADMIN", "SUPER_ADMIN")
 
+                        // Employee update access
                         .requestMatchers(HttpMethod.PUT, "/api/employees/**")
-                        .hasRole("ADMIN")
+                        .hasAnyRole("ADMIN", "SUPER_ADMIN")
 
+                        // Employee delete access
                         .requestMatchers(HttpMethod.DELETE, "/api/employees/**")
-                        .hasRole("ADMIN")
+                        .hasAnyRole("ADMIN", "SUPER_ADMIN")
 
-                        .anyRequest().authenticated()
+                        // All remaining APIs require authentication
+                        .anyRequest()
+                        .authenticated()
                 );
 
         http.addFilterBefore(
